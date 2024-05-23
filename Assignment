@@ -1,0 +1,196 @@
+import os
+
+#Get the current working directory
+cwd = os.getcwd()
+
+#List all directory files
+files = os.listdir(cwd)
+
+#Filter for CSV files
+csv_files = [f for f in files if f.endswith('.csv')]
+
+#Delete each CSV file
+for f in csv_files:
+    os.remove(os.path.join(cwd, f))
+
+import pandas as pd
+import random
+
+#List the cities
+cities = ['virginia city', 'athabasco', 'marin city', 'sacramento', 'san francisco', 'san diego', 'palmdale', 'river city']
+
+#Initialize an empty list to store dictionaries
+weekly_totals_per_store = []
+
+#Create dictionaries for each city
+for city in cities:
+    store_name = city
+    weekly_sales_total = random.randint(100000, 1000000)
+    store_dict = {'TheVault': store_name, 'weekly_sales_total': weekly_sales_total}
+    weekly_totals_per_store.append(store_dict)
+
+#Create a Pandas DataFrame
+df = pd.DataFrame(weekly_totals_per_store)
+
+#Write the DataFrame to a CSV file
+df.to_csv('weekly_sales.csv', index=False)
+
+print("Data saved to 'weekly_sales.csv'") #These CSV can be found under the sample data folder.
+
+import pandas as pd
+import random
+from datetime import datetime, timedelta
+
+#List of cities
+cities = ['virginia city', 'athabasco', 'marin city', 'sacramento', 'san francisco', 'san diego', 'palmdale', 'river city']
+
+#Initialize an empty list to store dictionaries
+weekly_totals_per_store = []
+
+#Generate weekly sales data for each week in 2024
+start_date = datetime(2024, 1, 1)
+end_date = datetime(2024, 12, 31)
+current_date = start_date
+
+while current_date <= end_date:
+    week_name = current_date.strftime('%B-%d-%Y')
+    current_date += timedelta(days=7)
+
+print(current_date)
+
+#List of cities
+cities = ['virginia city', 'athabasco', 'marin city', 'sacramento', 'san francisco', 'san diego', 'palmdale', 'river city']
+
+#Generate weekly sales data for each week in 2024
+start_date = datetime(2024, 1, 1)
+end_date = datetime(2024, 12, 31)
+current_date = start_date
+
+while current_date <= end_date:
+    weekly_totals_per_store = []
+    week_name = current_date.strftime('%B-%d-%Y')
+    current_date += timedelta(days=7)
+
+#Create dictionaries for each city
+    for city in cities:
+        TheVault = city
+        weekly_sales_total = random.randint(100000, 1000000)
+        store_dict = {'TheVault': TheVault, 'weekly_sales_total': weekly_sales_total}
+        weekly_totals_per_store.append(store_dict)
+
+#Create a Pandas DataFrame
+        df = pd.DataFrame(weekly_totals_per_store)
+
+#Write the DataFrame to a CSV file
+        save_as = week_name.replace(' ', '-').lower() + '.csv'
+        df.to_csv(save_as, index=False)
+
+print(f"Data saved to {save_as}")
+
+import os
+
+#Get the current directory
+current_directory = os.getcwd()
+
+#List all files in the current directory
+all_files = os.listdir(current_directory)
+
+#Filter only the CSV files
+csv_files = [file for file in all_files if file.endswith('.csv')]
+
+#Print filenames
+for filename in csv_files:
+  print(filename) #This displays results for how the CSV is saved under the sample data folder.
+
+import pandas as pd
+import os
+
+#Get the current directory
+current_directory = os.getcwd()
+
+#List all files in the current directory
+all_files = os.listdir(current_directory)
+
+#Filter only the CSV files
+csv_files = [file for file in all_files if file.endswith('.csv')]
+
+#Initialize a master list
+all_stores_all_weekly_sales = []
+
+#Read each CSV file, extract rows, and append to the master list
+for filename in csv_files:
+    df = pd.read_csv(filename)
+    week_name = filename.replace('.csv', '')
+    for _, row in df.iterrows():
+        row_dict = row.to_dict()
+        row_dict['week'] = week_name
+        all_stores_all_weekly_sales.append(row_dict)
+
+#Print the first few rows from the master list
+print(all_stores_all_weekly_sales) #This proves that the code has combined all the information saved in the CSV files.
+
+#Create a DataFrame from the list
+df = pd.DataFrame(all_stores_all_weekly_sales)
+
+#Print the DataFrame
+print(df)
+
+import altair as alt
+
+# Define width and height
+width = 800
+height = 300
+
+#Create a base line chart with specified width and height
+base = alt.Chart(df, width=width, height=height).mark_line().encode(
+    x='week:T',
+    y='weekly_sales_total:Q',
+    color='TheVault:N',
+    tooltip=['TheVault:N', 'weekly_sales_total:Q', 'week:T']).interactive()
+
+#Display chart
+base
+
+import pandas as pd
+
+#Group the DataFrame by 'store_name' and calculate statistical properties
+grouped_stats = df.groupby('TheVault')['weekly_sales_total'].describe()
+
+#Calculate the variance for each store
+grouped_variance = df.groupby('TheVault')['weekly_sales_total'].var().rename("variance")
+
+#Combine the statistics and variance into one dataframe
+stats_with_variance = pd.concat([grouped_stats, grouped_variance], axis=1)
+
+#Print combined statistics and variance
+print(stats_with_variance)
+
+import pandas as pd
+
+#Calculate variance for each store
+grouped_variance = df.groupby('TheVault')['weekly_sales_total'].var().rename("variance")
+
+#Rank stores by variance
+ranked_stores = grouped_variance.sort_values(ascending=False)
+
+#Print the ranked stores
+print(ranked_stores)
+
+import altair as alt
+
+#Convert the ranked_stores series to a dataframe for altair
+data = ranked_stores.reset_index()
+data.columns = ['TheVault', 'variance']
+
+#Define color scale with a midpoint
+color_scale = alt.Scale(scheme='redblue', domainMid=0)
+
+#Create the histogram
+histogram = alt.Chart(data).mark_bar().encode(
+    x='TheVault:N',
+    y='variance:Q',
+    color=alt.Color('variance:Q', scale=color_scale, legend=None),
+    tooltip=['TheVault:N', 'variance:Q']).properties(width=800)
+
+#Display histogram
+histogram
